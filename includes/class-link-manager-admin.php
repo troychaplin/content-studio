@@ -2,7 +2,7 @@
 /**
  * Admin functionality for Link Replacement plugin
  *
- * @package Link_Replacement
+ * @package Content_Studio
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Link_Replacement_Admin
+ * Class Content_Studio_Admin
  */
-class Link_Replacement_Admin {
+class Content_Studio_Admin {
 
 	/**
 	 * Plugin settings
@@ -25,16 +25,16 @@ class Link_Replacement_Admin {
 	 * Initialize admin functionality
 	 */
 	public function init() {
-		$this->settings = get_option( 'link_replacement_settings', array() );
+		$this->settings = get_option( 'content_studio_settings', array() );
 
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
-		add_action( 'wp_ajax_link_replacement_test_replacement', array( $this, 'ajax_test_replacement' ) );
-		add_action( 'wp_ajax_link_replacement_preview_import', array( $this, 'ajax_preview_import' ) );
-		add_action( 'wp_ajax_link_replacement_import_urls', array( $this, 'ajax_import_urls' ) );
-		add_action( 'wp_ajax_link_replacement_find_instances', array( $this, 'ajax_find_instances' ) );
-		add_action( 'wp_ajax_link_replacement_replace_instances', array( $this, 'ajax_replace_instances' ) );
+		add_action( 'wp_ajax_content_studio_test_replacement', array( $this, 'ajax_test_replacement' ) );
+		add_action( 'wp_ajax_content_studio_preview_import', array( $this, 'ajax_preview_import' ) );
+		add_action( 'wp_ajax_content_studio_import_urls', array( $this, 'ajax_import_urls' ) );
+		add_action( 'wp_ajax_content_studio_find_instances', array( $this, 'ajax_find_instances' ) );
+		add_action( 'wp_ajax_content_studio_replace_instances', array( $this, 'ajax_replace_instances' ) );
 	}
 
 	/**
@@ -42,10 +42,10 @@ class Link_Replacement_Admin {
 	 */
 	public function add_admin_menu() {
 		add_options_page(
-			__( 'Link Replacement', 'link-replacement' ),
-			__( 'Link Replacement', 'link-replacement' ),
+			__( 'Content Studio', 'content-studio' ),
+			__( 'Content Studio', 'content-studio' ),
 			'manage_options',
-			'link-replacement',
+			'content-studio',
 			array( $this, 'admin_page' )
 		);
 	}
@@ -55,8 +55,8 @@ class Link_Replacement_Admin {
 	 */
 	public function register_settings() {
 		register_setting(
-			'link_replacement_settings',
-			'link_replacement_settings',
+			'content_studio_settings',
+			'content_studio_settings',
 			array( $this, 'sanitize_settings' )
 		);
 	}
@@ -67,42 +67,42 @@ class Link_Replacement_Admin {
 	 * @param string $hook Current admin page hook.
 	 */
 	public function enqueue_admin_scripts( $hook ) {
-		if ( 'settings_page_link-replacement' !== $hook ) {
+		if ( 'settings_page_content-studio' !== $hook ) {
 			return;
 		}
 
 		wp_enqueue_script( 'jquery-ui-sortable' );
 		wp_enqueue_style(
-			'link-replacement-admin',
-			LINK_REPLACEMENT_PLUGIN_URL . 'assets/admin.css',
+			'content-studio-admin',
+			CONTENT_STUDIO_PLUGIN_URL . 'build/admin.css',
 			array(),
-			LINK_REPLACEMENT_VERSION
+			CONTENT_STUDIO_VERSION
 		);
 
 		wp_enqueue_script(
-			'link-replacement-admin',
-			LINK_REPLACEMENT_PLUGIN_URL . 'assets/admin.js',
+			'content-studio-admin',
+			CONTENT_STUDIO_PLUGIN_URL . 'build/admin.js',
 			array( 'jquery', 'jquery-ui-sortable' ),
-			LINK_REPLACEMENT_VERSION,
+			CONTENT_STUDIO_VERSION,
 			true
 		);
 
 		wp_localize_script(
-			'link-replacement-admin',
+			'content-studio-admin',
 			'linkReplacement',
 			array(
-				'ajaxUrl'  => admin_url( 'admin-ajax.php' ),
-				'nonce'    => wp_create_nonce( 'link_replacement_nonce' ),
-				'strings'  => array(
-					'confirmDelete'   => __( 'Are you sure you want to delete this replacement?', 'link-replacement' ),
-					'testReplacement' => __( 'Test Replacement', 'link-replacement' ),
-					'testing'         => __( 'Testing...', 'link-replacement' ),
-					'error'           => __( 'Error occurred while testing.', 'link-replacement' ),
-					'importing'       => __( 'Importing...', 'link-replacement' ),
-					'exporting'       => __( 'Exporting...', 'link-replacement' ),
-					'confirmImport'   => __( 'This will add new replacements. Existing ones will not be overwritten. Continue?', 'link-replacement' ),
-					'importSuccess'   => __( 'Successfully imported {count} replacements', 'link-replacement' ),
-					'importError'     => __( 'Error importing replacements', 'link-replacement' ),
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'content_studio_nonce' ),
+				'strings' => array(
+					'confirmDelete'   => __( 'Are you sure you want to delete this replacement?', 'content-studio' ),
+					'testReplacement' => __( 'Test Replacement', 'content-studio' ),
+					'testing'         => __( 'Testing...', 'content-studio' ),
+					'error'           => __( 'Error occurred while testing.', 'content-studio' ),
+					'importing'       => __( 'Importing...', 'content-studio' ),
+					'exporting'       => __( 'Exporting...', 'content-studio' ),
+					'confirmImport'   => __( 'This will add new replacements. Existing ones will not be overwritten. Continue?', 'content-studio' ),
+					'importSuccess'   => __( 'Successfully imported {count} replacements', 'content-studio' ),
+					'importError'     => __( 'Error importing replacements', 'content-studio' ),
 				),
 			)
 		);
@@ -127,9 +127,9 @@ class Link_Replacement_Admin {
 				}
 
 				$sanitized['replacements'][ $index ] = array(
-					'from_url'      => esc_url_raw( $replacement['from_url'] ),
-					'to_url'        => esc_url_raw( $replacement['to_url'] ),
-					'description'   => sanitize_text_field( $replacement['description'] ?? '' ),
+					'from_url'       => esc_url_raw( $replacement['from_url'] ),
+					'to_url'         => esc_url_raw( $replacement['to_url'] ),
+					'description'    => sanitize_text_field( $replacement['description'] ?? '' ),
 					'case_sensitive' => ! empty( $replacement['case_sensitive'] ),
 				);
 			}
@@ -144,68 +144,68 @@ class Link_Replacement_Admin {
 	public function admin_page() {
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Link Replacement', 'link-replacement' ); ?></h1>
+			<h1><?php esc_html_e( 'Link Replacement', 'content-studio' ); ?></h1>
 			<p class="description">
-				<?php esc_html_e( 'Replace URLs throughout your WordPress site content, posts, pages, widgets, and comments.', 'link-replacement' ); ?>
+				<?php esc_html_e( 'Replace URLs throughout your WordPress site content, posts, pages, widgets, and comments.', 'content-studio' ); ?>
 			</p>
 				
-			<div class="link-replacement-single-replacement">
-				<h2><?php esc_html_e( 'Single URL Replacement', 'link-replacement' ); ?></h2>
+			<div class="content-studio-single-replacement">
+				<h2><?php esc_html_e( 'Single URL Replacement', 'content-studio' ); ?></h2>
 				<p class="description">
-					<?php esc_html_e( 'Replace a single URL throughout your entire site.', 'link-replacement' ); ?>
+					<?php esc_html_e( 'Replace a single URL throughout your entire site.', 'content-studio' ); ?>
 				</p>
 				
 				<div class="single-fields-row">
 					<div class="single-field">
-						<label for="single-from-url"><?php esc_html_e( 'URL to Replace:', 'link-replacement' ); ?></label>
+						<label for="single-from-url"><?php esc_html_e( 'URL to Replace:', 'content-studio' ); ?></label>
 						<input type="url" id="single-from-url" class="regular-text" placeholder="https://old-site.com/page" />
 					</div>
 					<div class="single-field">
-						<label for="single-to-url"><?php esc_html_e( 'Replace With:', 'link-replacement' ); ?></label>
+						<label for="single-to-url"><?php esc_html_e( 'Replace With:', 'content-studio' ); ?></label>
 						<input type="url" id="single-to-url" class="regular-text" placeholder="https://new-site.com/page" />
 					</div>
 				</div>
 				<div class="single-actions">
 					<button type="button" id="find-instances" class="button button-secondary">
-						<?php esc_html_e( 'Find All Instances', 'link-replacement' ); ?>
+						<?php esc_html_e( 'Find All Instances', 'content-studio' ); ?>
 					</button>
 					<button type="button" id="replace-instances" class="button button-primary" style="display: none;">
-						<?php esc_html_e( 'Replace All Instances', 'link-replacement' ); ?>
+						<?php esc_html_e( 'Replace All Instances', 'content-studio' ); ?>
 					</button>
 				</div>
 				<div id="single-results" style="display: none;"></div>
 			</div>
 
-			<div class="link-replacement-import">
-				<h3><?php esc_html_e( 'Import URL Replacements', 'link-replacement' ); ?></h3>
+			<div class="content-studio-import">
+				<h3><?php esc_html_e( 'Import URL Replacements', 'content-studio' ); ?></h3>
 				<p class="description">
-					<?php esc_html_e( 'Import URL replacements from CSV or JSON files to replace multiple URLs at once.', 'link-replacement' ); ?>
+					<?php esc_html_e( 'Import URL replacements from CSV or JSON files to replace multiple URLs at once.', 'content-studio' ); ?>
 				</p>
 				
 				<div class="import-field">
-					<label for="import-file"><?php esc_html_e( 'Select File:', 'link-replacement' ); ?></label>
+					<label for="import-file"><?php esc_html_e( 'Select File:', 'content-studio' ); ?></label>
 					<input type="file" id="import-file" accept=".csv,.json" />
 					<p class="description">
-						<?php esc_html_e( 'Supported formats: CSV (old_url,new_url) or JSON with old_url/new_url fields', 'link-replacement' ); ?>
+						<?php esc_html_e( 'Supported formats: CSV (old_url,new_url) or JSON with old_url/new_url fields', 'content-studio' ); ?>
 					</p>
 				</div>
 				<button type="button" id="preview-import" class="button button-secondary">
-					<?php esc_html_e( 'Preview Import', 'link-replacement' ); ?>
+					<?php esc_html_e( 'Preview Import', 'content-studio' ); ?>
 				</button>
 				<button type="button" id="import-urls" class="button button-primary" style="display: none;">
-					<?php esc_html_e( 'Import Replacements', 'link-replacement' ); ?>
+					<?php esc_html_e( 'Import Replacements', 'content-studio' ); ?>
 				</button>
 				<div id="import-preview" style="display: none;"></div>
 				<div id="import-result" style="display: none;"></div>
 				
 				<div class="sample-files">
-					<h5><?php esc_html_e( 'Sample Files:', 'link-replacement' ); ?></h5>
+					<h5><?php esc_html_e( 'Sample Files:', 'content-studio' ); ?></h5>
 					<p>
-						<a href="<?php echo esc_url( LINK_REPLACEMENT_PLUGIN_URL . 'samples/sample-urls.csv' ); ?>" download class="button button-small">
-							<?php esc_html_e( 'Download Sample CSV', 'link-replacement' ); ?>
+						<a href="<?php echo esc_url( CONTENT_STUDIO_PLUGIN_URL . 'samples/sample-urls.csv' ); ?>" download class="button button-small">
+							<?php esc_html_e( 'Download Sample CSV', 'content-studio' ); ?>
 						</a>
-						<a href="<?php echo esc_url( LINK_REPLACEMENT_PLUGIN_URL . 'samples/sample-urls.json' ); ?>" download class="button button-small">
-							<?php esc_html_e( 'Download Sample JSON', 'link-replacement' ); ?>
+						<a href="<?php echo esc_url( CONTENT_STUDIO_PLUGIN_URL . 'samples/sample-urls.json' ); ?>" download class="button button-small">
+							<?php esc_html_e( 'Download Sample JSON', 'content-studio' ); ?>
 						</a>
 					</p>
 				</div>
@@ -220,14 +220,14 @@ class Link_Replacement_Admin {
 	 * AJAX handler for testing replacement
 	 */
 	public function ajax_test_replacement() {
-		check_ajax_referer( 'link_replacement_nonce', 'nonce' );
+		check_ajax_referer( 'content_studio_nonce', 'nonce' );
 
 		$from_url     = sanitize_url( wp_unslash( $_POST['from_url'] ?? '' ) );
 		$to_url       = sanitize_url( wp_unslash( $_POST['to_url'] ?? '' ) );
 		$test_content = sanitize_textarea_field( wp_unslash( $_POST['test_content'] ?? '' ) );
 
 		if ( empty( $from_url ) || empty( $to_url ) || empty( $test_content ) ) {
-			wp_send_json_error( __( 'All fields are required for testing.', 'link-replacement' ) );
+			wp_send_json_error( __( 'All fields are required for testing.', 'content-studio' ) );
 		}
 
 		// Escape special regex characters
@@ -265,17 +265,17 @@ class Link_Replacement_Admin {
 	 * AJAX handler for previewing import
 	 */
 	public function ajax_preview_import() {
-		check_ajax_referer( 'link_replacement_nonce', 'nonce' );
+		check_ajax_referer( 'content_studio_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'Insufficient permissions.', 'link-replacement' ) );
+			wp_send_json_error( __( 'Insufficient permissions.', 'content-studio' ) );
 		}
 
 		$file_content = wp_unslash( $_POST['file_content'] ?? '' );
 		$file_type    = sanitize_text_field( wp_unslash( $_POST['file_type'] ?? 'csv' ) );
 
 		if ( empty( $file_content ) ) {
-			wp_send_json_error( __( 'No file content provided.', 'link-replacement' ) );
+			wp_send_json_error( __( 'No file content provided.', 'content-studio' ) );
 		}
 
 		$imported_urls = array();
@@ -286,42 +286,42 @@ class Link_Replacement_Admin {
 			} elseif ( 'json' === $file_type ) {
 				$imported_urls = $this->parse_json_content( $file_content );
 			} else {
-				wp_send_json_error( __( 'Unsupported file format.', 'link-replacement' ) );
+				wp_send_json_error( __( 'Unsupported file format.', 'content-studio' ) );
 			}
 
 			if ( empty( $imported_urls ) ) {
-				wp_send_json_error( __( 'No valid URL replacements found in the file.', 'link-replacement' ) );
+				wp_send_json_error( __( 'No valid URL replacements found in the file.', 'content-studio' ) );
 			}
 
 			// Filter out URLs that have zero instances on the site
-			$filtered_urls = array();
+			$filtered_urls  = array();
 			$total_imported = count( $imported_urls );
 			$filtered_count = 0;
 
 			foreach ( $imported_urls as $url_replacement ) {
 				$search_url = $url_replacement['from_url'];
-				
+
 				// Check if this URL exists on the site
 				$audit_results = $this->perform_url_audit( $search_url, array() );
 
 				// Only include URLs that have at least one instance
 				if ( $audit_results['total_found'] > 0 ) {
 					$filtered_urls[] = $url_replacement;
-					$filtered_count++;
+					++$filtered_count;
 				}
 			}
 
 			wp_send_json_success(
 				array(
-					'replacements' => $filtered_urls,
-					'count'        => $filtered_count,
+					'replacements'   => $filtered_urls,
+					'count'          => $filtered_count,
 					'total_imported' => $total_imported,
-					'filtered_out' => $total_imported - $filtered_count,
+					'filtered_out'   => $total_imported - $filtered_count,
 				)
 			);
 
 		} catch ( Exception $e ) {
-			wp_send_json_error( __( 'Error parsing file: ', 'link-replacement' ) . $e->getMessage() );
+			wp_send_json_error( __( 'Error parsing file: ', 'content-studio' ) . $e->getMessage() );
 		}
 	}
 
@@ -329,17 +329,17 @@ class Link_Replacement_Admin {
 	 * AJAX handler for importing URLs
 	 */
 	public function ajax_import_urls() {
-		check_ajax_referer( 'link_replacement_nonce', 'nonce' );
+		check_ajax_referer( 'content_studio_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'Insufficient permissions.', 'link-replacement' ) );
+			wp_send_json_error( __( 'Insufficient permissions.', 'content-studio' ) );
 		}
 
 		$file_content = wp_unslash( $_POST['file_content'] ?? '' );
 		$file_type    = sanitize_text_field( wp_unslash( $_POST['file_type'] ?? 'csv' ) );
 
 		if ( empty( $file_content ) ) {
-			wp_send_json_error( __( 'No file content provided.', 'link-replacement' ) );
+			wp_send_json_error( __( 'No file content provided.', 'content-studio' ) );
 		}
 
 		$imported_urls = array();
@@ -350,20 +350,20 @@ class Link_Replacement_Admin {
 			} elseif ( 'json' === $file_type ) {
 				$imported_urls = $this->parse_json_content( $file_content );
 			} else {
-				wp_send_json_error( __( 'Unsupported file format.', 'link-replacement' ) );
+				wp_send_json_error( __( 'Unsupported file format.', 'content-studio' ) );
 			}
 
 			if ( empty( $imported_urls ) ) {
-				wp_send_json_error( __( 'No valid URL replacements found in the file.', 'link-replacement' ) );
+				wp_send_json_error( __( 'No valid URL replacements found in the file.', 'content-studio' ) );
 			}
 
 			// Filter out URLs that have zero instances on the site
-			$filtered_urls = array();
+			$filtered_urls  = array();
 			$total_imported = count( $imported_urls );
 
 			foreach ( $imported_urls as $url_replacement ) {
 				$search_url = $url_replacement['from_url'];
-				
+
 				// Check if this URL exists on the site
 				$audit_results = $this->perform_url_audit( $search_url, array() );
 
@@ -374,7 +374,7 @@ class Link_Replacement_Admin {
 			}
 
 			if ( empty( $filtered_urls ) ) {
-				wp_send_json_error( __( 'No URLs with instances found on this site. None of the URLs in your import file exist on the site.', 'link-replacement' ) );
+				wp_send_json_error( __( 'No URLs with instances found on this site. None of the URLs in your import file exist on the site.', 'content-studio' ) );
 			}
 
 			// Get current settings
@@ -387,21 +387,21 @@ class Link_Replacement_Admin {
 			}
 
 			// Update settings
-			update_option( 'link_replacement_settings', $current_settings );
+			update_option( 'content_studio_settings', $current_settings );
 			$this->settings = $current_settings;
 
 			$imported_count = count( $filtered_urls );
-			$filtered_out = $total_imported - $imported_count;
-			
+			$filtered_out   = $total_imported - $imported_count;
+
 			$message = sprintf(
-				__( 'Successfully imported %d replacements. Total replacements: %d', 'link-replacement' ),
+				__( 'Successfully imported %1$d replacements. Total replacements: %2$d', 'content-studio' ),
 				$imported_count,
 				count( $current_settings['replacements'] )
 			);
-			
+
 			if ( $filtered_out > 0 ) {
 				$message .= sprintf(
-					__( ' (%d URLs were filtered out because they have zero instances on this site)', 'link-replacement' ),
+					__( ' (%d URLs were filtered out because they have zero instances on this site)', 'content-studio' ),
 					$filtered_out
 				);
 			}
@@ -415,7 +415,7 @@ class Link_Replacement_Admin {
 			);
 
 		} catch ( Exception $e ) {
-			wp_send_json_error( __( 'Error parsing file: ', 'link-replacement' ) . $e->getMessage() );
+			wp_send_json_error( __( 'Error parsing file: ', 'content-studio' ) . $e->getMessage() );
 		}
 	}
 
@@ -427,7 +427,7 @@ class Link_Replacement_Admin {
 	 * @return array Array of URL replacements.
 	 */
 	private function parse_csv_content( $content ) {
-		$lines = str_getcsv( $content, "\n" );
+		$lines        = str_getcsv( $content, "\n" );
 		$replacements = array();
 
 		// Skip header row if it exists
@@ -443,7 +443,7 @@ class Link_Replacement_Admin {
 			}
 
 			$columns = str_getcsv( $line );
-			
+
 			if ( count( $columns ) < 2 ) {
 				continue;
 			}
@@ -456,9 +456,9 @@ class Link_Replacement_Admin {
 			}
 
 			$replacements[] = array(
-				'from_url'      => $from_url,
-				'to_url'        => $to_url,
-				'description'   => '',
+				'from_url'       => $from_url,
+				'to_url'         => $to_url,
+				'description'    => '',
 				'case_sensitive' => false,
 			);
 		}
@@ -507,9 +507,9 @@ class Link_Replacement_Admin {
 			}
 
 			$replacements[] = array(
-				'from_url'      => $from_url,
-				'to_url'        => $to_url,
-				'description'   => '',
+				'from_url'       => $from_url,
+				'to_url'         => $to_url,
+				'description'    => '',
 				'case_sensitive' => false,
 			);
 		}
@@ -538,6 +538,16 @@ class Link_Replacement_Admin {
 		// Search in post meta (including ACF fields)
 		$this->audit_custom_fields( $search_url, $results );
 
+		// Search in comments if enabled
+		if ( ! empty( $options['comments'] ) ) {
+			$this->audit_comments( $search_url, $results );
+		}
+
+		// Search in site options if enabled
+		if ( ! empty( $options['options'] ) ) {
+			$this->audit_options( $search_url, $results );
+		}
+
 		return $results;
 	}
 
@@ -550,7 +560,7 @@ class Link_Replacement_Admin {
 	private function audit_posts( $search_url, &$results ) {
 		global $wpdb;
 
-		$post_types = get_post_types( array( 'public' => true ), 'names' );
+		$post_types     = get_post_types( array( 'public' => true ), 'names' );
 		$post_types_sql = "'" . implode( "','", array_map( 'esc_sql', $post_types ) ) . "'";
 
 		$query = $wpdb->prepare(
@@ -568,16 +578,16 @@ class Link_Replacement_Admin {
 
 		foreach ( $posts as $post ) {
 			$count = substr_count( $post->post_content, $search_url ) + substr_count( $post->post_excerpt, $search_url );
-			
+
 			if ( $count > 0 ) {
-				$results['locations'][] = array(
-					'type'        => 'post',
-					'id'          => $post->ID,
-					'title'       => $post->post_title,
-					'post_type'   => $post->post_type,
-					'url'         => get_permalink( $post->ID ),
-					'count'       => $count,
-					'edit_url'    => get_edit_post_link( $post->ID ),
+				$results['locations'][]  = array(
+					'type'      => 'post',
+					'id'        => $post->ID,
+					'title'     => $post->post_title,
+					'post_type' => $post->post_type,
+					'url'       => get_permalink( $post->ID ),
+					'count'     => $count,
+					'edit_url'  => get_edit_post_link( $post->ID ),
 				);
 				$results['total_found'] += $count;
 			}
@@ -606,18 +616,18 @@ class Link_Replacement_Admin {
 
 		foreach ( $meta_fields as $field ) {
 			$meta_value = get_post_meta( $field->post_id, $field->meta_key, true );
-			$count = substr_count( $meta_value, $search_url );
-			
+			$count      = substr_count( $meta_value, $search_url );
+
 			if ( $count > 0 ) {
-				$results['locations'][] = array(
-					'type'        => 'custom_field',
-					'id'          => $field->post_id,
-					'title'       => $field->post_title . ' (' . $field->meta_key . ')',
-					'post_type'   => $field->post_type,
-					'url'         => get_permalink( $field->post_id ),
-					'meta_key'    => $field->meta_key,
-					'count'       => $count,
-					'edit_url'    => get_edit_post_link( $field->post_id ),
+				$results['locations'][]  = array(
+					'type'      => 'custom_field',
+					'id'        => $field->post_id,
+					'title'     => $field->post_title . ' (' . $field->meta_key . ')',
+					'post_type' => $field->post_type,
+					'url'       => get_permalink( $field->post_id ),
+					'meta_key'  => $field->meta_key,
+					'count'     => $count,
+					'edit_url'  => get_edit_post_link( $field->post_id ),
 				);
 				$results['total_found'] += $count;
 			}
@@ -646,16 +656,16 @@ class Link_Replacement_Admin {
 
 		foreach ( $comments as $comment ) {
 			$count = substr_count( $comment->comment_content, $search_url );
-			
+
 			if ( $count > 0 ) {
-				$results['locations'][] = array(
-					'type'        => 'comment',
-					'id'          => $comment->comment_ID,
-					'title'       => 'Comment on: ' . $comment->post_title,
-					'post_type'   => $comment->post_type,
-					'url'         => get_permalink( $comment->comment_post_ID ) . '#comment-' . $comment->comment_ID,
-					'count'       => $count,
-					'edit_url'    => admin_url( 'comment.php?action=editcomment&c=' . $comment->comment_ID ),
+				$results['locations'][]  = array(
+					'type'      => 'comment',
+					'id'        => $comment->comment_ID,
+					'title'     => 'Comment on: ' . $comment->post_title,
+					'post_type' => $comment->post_type,
+					'url'       => get_permalink( $comment->comment_post_ID ) . '#comment-' . $comment->comment_ID,
+					'count'     => $count,
+					'edit_url'  => admin_url( 'comment.php?action=editcomment&c=' . $comment->comment_ID ),
 				);
 				$results['total_found'] += $count;
 			}
@@ -677,23 +687,23 @@ class Link_Replacement_Admin {
 			WHERE option_value LIKE %s
 			AND option_name NOT LIKE %s",
 			'%' . $wpdb->esc_like( $search_url ) . '%',
-			'%link_replacement%'
+			'%content_studio%'
 		);
 
 		$options = $wpdb->get_results( $query );
 
 		foreach ( $options as $option ) {
 			$count = substr_count( $option->option_value, $search_url );
-			
+
 			if ( $count > 0 ) {
-				$results['locations'][] = array(
-					'type'        => 'option',
-					'id'          => $option->option_name,
-					'title'       => 'Site Option: ' . $option->option_name,
-					'post_type'   => 'option',
-					'url'         => admin_url( 'options-general.php' ),
-					'count'       => $count,
-					'edit_url'    => admin_url( 'options-general.php' ),
+				$results['locations'][]  = array(
+					'type'      => 'option',
+					'id'        => $option->option_name,
+					'title'     => 'Site Option: ' . $option->option_name,
+					'post_type' => 'option',
+					'url'       => admin_url( 'options-general.php' ),
+					'count'     => $count,
+					'edit_url'  => admin_url( 'options-general.php' ),
 				);
 				$results['total_found'] += $count;
 			}
@@ -704,24 +714,27 @@ class Link_Replacement_Admin {
 	 * AJAX handler for finding instances of a URL
 	 */
 	public function ajax_find_instances() {
-		check_ajax_referer( 'link_replacement_nonce', 'nonce' );
+		check_ajax_referer( 'content_studio_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'Insufficient permissions.', 'link-replacement' ) );
+			wp_send_json_error( __( 'Insufficient permissions.', 'content-studio' ) );
 		}
 
 		$search_url = sanitize_url( wp_unslash( $_POST['search_url'] ?? '' ) );
 
 		if ( empty( $search_url ) ) {
-			wp_send_json_error( __( 'Please provide a URL to search for.', 'link-replacement' ) );
+			wp_send_json_error( __( 'Please provide a URL to search for.', 'content-studio' ) );
 		}
 
-		$results = $this->perform_url_audit( $search_url, array(
-			'posts'        => true,
-			'custom_fields' => true,
-			'comments'     => true,
-			'options'      => true,
-		) );
+		$results = $this->perform_url_audit(
+			$search_url,
+			array(
+				'posts'         => true,
+				'custom_fields' => true,
+				'comments'      => true,
+				'options'       => true,
+			)
+		);
 
 		wp_send_json_success( $results );
 	}
@@ -730,17 +743,17 @@ class Link_Replacement_Admin {
 	 * AJAX handler for replacing instances of a URL
 	 */
 	public function ajax_replace_instances() {
-		check_ajax_referer( 'link_replacement_nonce', 'nonce' );
+		check_ajax_referer( 'content_studio_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'Insufficient permissions.', 'link-replacement' ) );
+			wp_send_json_error( __( 'Insufficient permissions.', 'content-studio' ) );
 		}
 
 		$from_url = sanitize_url( wp_unslash( $_POST['from_url'] ?? '' ) );
 		$to_url   = sanitize_url( wp_unslash( $_POST['to_url'] ?? '' ) );
 
 		if ( empty( $from_url ) || empty( $to_url ) ) {
-			wp_send_json_error( __( 'Please provide both URLs.', 'link-replacement' ) );
+			wp_send_json_error( __( 'Please provide both URLs.', 'content-studio' ) );
 		}
 
 		$results = $this->perform_url_replacement( $from_url, $to_url );
@@ -778,7 +791,10 @@ class Link_Replacement_Admin {
 				WHERE (post_content LIKE %s OR post_excerpt LIKE %s)
 				AND post_status = 'publish'
 				AND post_type != 'revision'",
-				$from_url, $to_url, $from_url, $to_url,
+				$from_url,
+				$to_url,
+				$from_url,
+				$to_url,
 				'%' . $wpdb->esc_like( $from_url ) . '%',
 				'%' . $wpdb->esc_like( $from_url ) . '%'
 			)
@@ -790,7 +806,8 @@ class Link_Replacement_Admin {
 				"UPDATE {$wpdb->postmeta} 
 				SET meta_value = REPLACE(meta_value, %s, %s)
 				WHERE meta_value LIKE %s",
-				$from_url, $to_url,
+				$from_url,
+				$to_url,
 				'%' . $wpdb->esc_like( $from_url ) . '%'
 			)
 		);
@@ -810,7 +827,7 @@ class Link_Replacement_Admin {
 	 */
 	private function remove_replacement_from_settings( $from_url, $to_url ) {
 		$current_settings = $this->settings;
-		
+
 		if ( empty( $current_settings['replacements'] ) ) {
 			return;
 		}
@@ -827,7 +844,7 @@ class Link_Replacement_Admin {
 		$current_settings['replacements'] = array_values( $current_settings['replacements'] );
 
 		// Update the settings
-		update_option( 'link_replacement_settings', $current_settings );
+		update_option( 'content_studio_settings', $current_settings );
 		$this->settings = $current_settings;
 	}
 }

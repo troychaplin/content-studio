@@ -1,8 +1,8 @@
 <?php
 /**
- * Main Link Replacement class
+ * Main Content Studio class
  *
- * @package Link_Replacement
+ * @package Content_Studio
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Link_Replacement
+ * Class Content_Studio
  */
-class Link_Replacement {
+class Content_Studio {
 
 	/**
 	 * Plugin settings
@@ -25,7 +25,7 @@ class Link_Replacement {
 	 * Initialize the plugin
 	 */
 	public function init() {
-		$this->settings = get_option( 'link_replacement_settings', array() );
+		$this->settings = get_option( 'content_studio_settings', array() );
 		$this->add_hooks();
 	}
 
@@ -66,8 +66,8 @@ class Link_Replacement {
 				continue;
 			}
 
-			$from_url   = $replacement['from_url'];
-			$to_url     = $replacement['to_url'];
+			$from_url = $replacement['from_url'];
+			$to_url   = $replacement['to_url'];
 
 			// Escape special regex characters in the from_url
 			$from_url_pattern = preg_quote( $from_url, '/' );
@@ -107,11 +107,11 @@ class Link_Replacement {
 	 * @return mixed Modified meta value.
 	 */
 	public function replace_urls_in_meta( $value, $post_id, $meta_key, $single ) {
-		// Only process specific meta keys that might contain URLs
+		// Only process specific meta keys that might contain URLs.
 		$url_meta_keys = array(
 			'_wp_attachment_image_alt',
 			'_wp_attachment_metadata',
-			'custom_field_with_urls', // Add your custom meta keys here
+			'custom_field_with_urls',
 		);
 
 		if ( ! in_array( $meta_key, $url_meta_keys, true ) ) {
@@ -141,6 +141,6 @@ class Link_Replacement {
 	 */
 	public function update_settings( $settings ) {
 		$this->settings = $settings;
-		update_option( 'link_replacement_settings', $settings );
+		update_option( 'content_studio_settings', $settings );
 	}
 }
