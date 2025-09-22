@@ -538,6 +538,16 @@ class Content_Studio_Admin {
 		// Search in post meta (including ACF fields)
 		$this->audit_custom_fields( $search_url, $results );
 
+		// Search in comments if enabled
+		if ( ! empty( $options['comments'] ) ) {
+			$this->audit_comments( $search_url, $results );
+		}
+
+		// Search in site options if enabled
+		if ( ! empty( $options['options'] ) ) {
+			$this->audit_options( $search_url, $results );
+		}
+
 		return $results;
 	}
 

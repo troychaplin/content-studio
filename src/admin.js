@@ -152,7 +152,7 @@ jQuery(document).ready(function ($) {
 			url: linkReplacement.ajaxUrl,
 			type: 'POST',
 			data: {
-				action: 'link_replacement_preview_import',
+				action: 'content_studio_preview_import',
 				nonce: linkReplacement.nonce,
 				file_content: content,
 				file_type: fileType,
@@ -189,7 +189,7 @@ jQuery(document).ready(function ($) {
 			url: linkReplacement.ajaxUrl,
 			type: 'POST',
 			data: {
-				action: 'link_replacement_import_urls',
+				action: 'content_studio_import_urls',
 				nonce: linkReplacement.nonce,
 				file_content: content,
 				file_type: fileType,
@@ -385,7 +385,7 @@ jQuery(document).ready(function ($) {
 			url: linkReplacement.ajaxUrl,
 			type: 'POST',
 			data: {
-				action: 'link_replacement_find_instances',
+				action: 'content_studio_find_instances',
 				nonce: linkReplacement.nonce,
 				search_url: searchUrl,
 			},
@@ -421,7 +421,7 @@ jQuery(document).ready(function ($) {
 			url: linkReplacement.ajaxUrl,
 			type: 'POST',
 			data: {
-				action: 'link_replacement_replace_instances',
+				action: 'content_studio_replace_instances',
 				nonce: linkReplacement.nonce,
 				from_url: fromUrl,
 				to_url: toUrl,
@@ -677,7 +677,7 @@ jQuery(document).ready(function ($) {
 			url: linkReplacement.ajaxUrl,
 			type: 'POST',
 			data: {
-				action: 'link_replacement_find_instances',
+				action: 'content_studio_find_instances',
 				nonce: linkReplacement.nonce,
 				search_url: replacement.from_url,
 			},
