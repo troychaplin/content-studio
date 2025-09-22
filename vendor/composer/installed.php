@@ -3,7 +3,7 @@
         'name' => 'troychaplin/content-studio',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '4bf78e9eb79d790e0f749dd08ce31fc533f589c3',
+        'reference' => 'df89692b822340fc53ad9e0543517a2bb39be64f',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -49,7 +49,7 @@
         'troychaplin/content-studio' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '4bf78e9eb79d790e0f749dd08ce31fc533f589c3',
+            'reference' => 'df89692b822340fc53ad9e0543517a2bb39be64f',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
