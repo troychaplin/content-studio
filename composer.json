@@ -1,0 +1,33 @@
+{
+	"name": "troychaplin/content-studio",
+	"description": "Provides and interface to manage content across the site.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"autoload": {
+		"psr-4": {
+			"ContentStudio\\": "Functions/"
+		}
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "v1.0.0",
+		"squizlabs/php_codesniffer": "3.12.2",
+		"wp-coding-standards/wpcs": "3.1"
+	},
+	"config": {
+		"autoloader-suffix": "ContentStudio",
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"scripts": {
+		"format": "./vendor/bin/phpcbf --standard=phpcs.xml.dist -v --report-summary --report-source || true",
+		"lint": "phpcs --standard=phpcs.xml.dist",
+		"post-install-cmd": [
+			"@fix-vendor-test-files"
+		],
+		"post-update-cmd": [
+			"@fix-vendor-test-files"
+		],
+		"fix-vendor-test-files": "find vendor/squizlabs/php_codesniffer/tests -name '*.php' -exec sed -i '' 's/namespace \\([^.]*\\)\\\\.\\([^;]*\\);/namespace \\1.\\2;/g' {} \\;"
+	}
+}

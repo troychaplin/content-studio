@@ -12,32 +12,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'LINK_REPLACEMENT_VERSION', '1.0.0' );
-define( 'LINK_REPLACEMENT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'LINK_REPLACEMENT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'CONTENT_STUDIO_VERSION', '1.0.0' );
+define( 'CONTENT_STUDIO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'CONTENT_STUDIO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 // Include required files
-require_once LINK_REPLACEMENT_PLUGIN_DIR . 'includes/class-link-manager.php';
-require_once LINK_REPLACEMENT_PLUGIN_DIR . 'includes/class-link-manager-admin.php';
+require_once CONTENT_STUDIO_PLUGIN_DIR . 'includes/class-link-manager.php';
+require_once CONTENT_STUDIO_PLUGIN_DIR . 'includes/class-link-manager-admin.php';
 
 // Initialize the plugin
-function link_replacement_init() {
-	$link_replacement = new Link_Replacement();
-	$link_replacement->init();
+function content_studio_init() {
+	$content_studio = new Content_Studio();
+	$content_studio->init();
 
 	if ( is_admin() ) {
-		$admin = new Link_Replacement_Admin();
+		$admin = new Content_Studio_Admin();
 		$admin->init();
 	}
 }
-add_action( 'init', 'link_replacement_init' );
+add_action( 'init', 'content_studio_init' );
 
 // Activation hook
-register_activation_hook( __FILE__, 'link_replacement_activate' );
-function link_replacement_activate() {
+register_activation_hook( __FILE__, 'content_studio_activate' );
+function content_studio_activate() {
 	// Create default options
 	add_option(
-		'link_replacement_settings',
+		'content_studio_settings',
 		array(
 			'replacements' => array(),
 		)
@@ -45,7 +45,7 @@ function link_replacement_activate() {
 }
 
 // Deactivation hook
-register_deactivation_hook( __FILE__, 'link_replacement_deactivate' );
-function link_replacement_deactivate() {
+register_deactivation_hook( __FILE__, 'content_studio_deactivate' );
+function content_studio_deactivate() {
 	// Clean up if needed
 }
