@@ -1,0 +1,7 @@
+old_url,new_url
+https://old-site.com,https://new-site.com
+https://old-site.com/page1,https://new-site.com/page1
+https://old-site.com/images/,https://cdn.new-site.com/images/
+https://old-site.com/blog,https://new-site.com/news
+https://old-site.com/contact,https://new-site.com/get-in-touch
+https://old-site.com/products,https://new-site.com/services

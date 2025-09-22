@@ -1,0 +1,26 @@
+[
+  {
+    "old_url": "https://old-site.com",
+    "new_url": "https://new-site.com"
+  },
+  {
+    "old_url": "https://old-site.com/page1",
+    "new_url": "https://new-site.com/page1"
+  },
+  {
+    "old_url": "https://old-site.com/images/",
+    "new_url": "https://cdn.new-site.com/images/"
+  },
+  {
+    "old_url": "https://old-site.com/blog",
+    "new_url": "https://new-site.com/news"
+  },
+  {
+    "old_url": "https://old-site.com/contact",
+    "new_url": "https://new-site.com/get-in-touch"
+  },
+  {
+    "old_url": "https://old-site.com/products",
+    "new_url": "https://new-site.com/services"
+  }
+]
