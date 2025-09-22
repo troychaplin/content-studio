@@ -4,7 +4,7 @@ A modern WordPress plugin that provides a comprehensive content management inter
 
 **🚧 Currently in Development**: This plugin is undergoing a major React-based refactoring to create a modern, extensible architecture for multiple content management interfaces.
 
-## Current Features (v1.0.0)
+## Current Features (v0.0.1)
 
 ### URL Replacement Interface
 - **URL Discovery**: Find all instances of a URL across your site before replacing
@@ -23,7 +23,7 @@ The plugin replaces URLs in:
 - Plain text URLs
 - Site options
 
-## Future Vision (v2.0.0+)
+## Future Vision (v1.0.0+)
 
 ### Multi-Interface Architecture
 Content Studio is being redesigned as a modular platform with specialized interfaces for different content management tasks:
@@ -43,12 +43,12 @@ Content Studio is being redesigned as a modular platform with specialized interf
 
 ## Installation
 
-### Current Version (v1.0.0)
+### Current Version (v0.0.1)
 1. Upload the `content-studio` folder to your `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Go to Settings > Content Studio to configure your replacements
 
-### Development Version (v2.0.0)
+### Development Version (v1.0.0)
 The React-based version is currently in development. To use the development version:
 
 1. Clone the repository
@@ -60,7 +60,7 @@ The React-based version is currently in development. To use the development vers
 
 ## Usage
 
-### Current Version (v1.0.0)
+### Current Version (v0.0.1)
 
 #### Single URL Replacement
 1. Navigate to **Settings > Content Studio** in your WordPress admin
@@ -71,7 +71,7 @@ The React-based version is currently in development. To use the development vers
 4. Review the results showing where the URL appears
 5. Click **"Replace All Instances"** to perform the replacement
 
-### Future Version (v2.0.0)
+### Future Version (v1.0.0)
 The React-based interface will provide:
 - **Tabbed Interface**: Switch between different content management tools
 - **Real-time Updates**: Live progress tracking for all operations
@@ -338,8 +338,8 @@ We welcome contributions! Here's how to get involved:
 #### Frontend (React)
 ```
 src/
-├── components/          # Reusable UI components
-├── interfaces/          # Interface-specific components
+├── components/         # Reusable UI components
+├── interfaces/         # Interface-specific components
 ├── hooks/              # Custom React hooks
 ├── context/            # Global state management
 └── utils/              # Helper functions
